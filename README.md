@@ -68,3 +68,11 @@ Authorization: Bearer <token>
 
 ## Testing
 The Postman collection includes positive and negative test cases for all endpoints, with automation scripts including pre-request and post-response scripts.
+
+## Screenshots
+
+### Collection Runner
+![Collection Runner](images/runner-image.png)
+
+### All Tests Passing
+![Tests](images/tests-executed-image.png)
