@@ -72,7 +72,7 @@ The Postman collection includes positive and negative test cases for all endpoin
 ## Screenshots
 
 ### Collection Runner
-![Collection Runner](images/runner-image.png)
+![Collection Runner](runner-image.png)
 
 ### All Tests Passing
-![Tests](images/tests-executed-image.png)
+![Tests](tests-executed-image.png)
