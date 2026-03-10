@@ -37,6 +37,7 @@ jobs:
 
       - name: Run Newman tests
         run: |
+          mkdir -p reports
           newman run postman/collections/movie-api.postman_collection.json \\
             --environment postman/environments/movie-api.postman_environment.json \\
             --reporters cli,htmlextra \\
