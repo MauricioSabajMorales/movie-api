@@ -1,0 +1,50 @@
+name: Newman API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start API server
+        run: npm run dev &
+        env:
+          PORT: 3001
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+
+      - name: Wait for server to be ready
+        run: npx wait-on http://localhost:3001 --timeout 30000
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-htmlextra
+
+      - name: Run Newman tests
+        run: |
+          newman run postman/collections/movie-api.postman_collection.json \\
+            --environment postman/environments/movie-api.postman_environment.json \\
+            --reporters cli,htmlextra \\
+            --reporter-htmlextra-export reports/newman-report.html
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: newman-report
+          path: reports/newman-report.html

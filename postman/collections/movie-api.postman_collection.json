@@ -1,0 +1,1205 @@
+{
+  "info": {
+    "_postman_id": "cf83e108-7040-4db3-8ce9-bf2b1969370c",
+    "name": "Movie API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28472829"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const randomNum = Math.floor(Math.random() * 10000);",
+              "const username = `user_${randomNum}`;",
+              "",
+              "pm.collectionVariables.set('random_user', username);",
+              "",
+              "pm.environment.set('random_user', username);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function() {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"The anwswer has succeed message\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Usuario creado exitosamente');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"{{random_user}}\",\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Movies",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200\", function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene un array de películas\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.movies).to.be.an('array');",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene el username\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.user).to.be.a('string');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();",
+              "if (response.token){",
+              "    pm.environment.set(\"token\", response.token);",
+              "    console.log('Token guardado automáticamente');",
+              "}",
+              "",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response contains token\", function () {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.token).to.be.a('string');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hdXJpY2lvIiwiaWF0IjoxNzcyODA3OTIyLCJleHAiOjE3NzI4MTE1MjJ9.NlSJFbM8KWkgTG-cJ3agvG1knbG6bsgh4PNWANokMvQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"{{random_user}}\",\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200\", function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene el username\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.username).to.be.a('string');",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Este es tu perfil');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/profile",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Favorite",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 201\", function() {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de éxito\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Agregada a favoritos');",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene array de favoritos\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.favorites).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const randomMovieId = Math.floor(Math.random() * 3) + 1;",
+              "pm.variables.set('movieId', randomMovieId);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieId\": {{movieId}}\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Favorites",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200\", function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene el username\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.username).to.be.a('string');",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene array de favoritos\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.favorites).to.be.an('array');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search OMDB",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200\", function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene array de películas\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.movies).to.be.an('array');",
+              "});",
+              "",
+              "pm.test(\"El array no está vacío\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.movies.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/search?title=batman",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "title",
+              "value": "batman",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register User - Already Exists",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('El usuario ya existe');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"{{random_user}}\",\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login User - Wrong Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Contraseña incorrecta');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"{{random_user}}\",\n    \"password\": \"wrongpassword\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login User - User Not Found",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Usuario no encontrado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"usuarioinexistente\",\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register User - No Username",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Username y password son requeridos');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"password\": \"123456\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register User - No Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Username y password son requeridos');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"mauricio\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Movies - No Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token no proporcionado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/movies",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Movies - Invalid Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token inválido o expirado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "tokeninvalido123",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Search OMDB - No Title",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Debes proporcionar un título');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/search",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "search"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Favorite - No Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token no proporcionado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Favorite - Duplicate",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 400\", function() {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('La película ya está en favoritos');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const baseUrl = pm.environment.get('base_url');",
+              "const token = pm.environment.get('token');",
+              "",
+              "pm.sendRequest({",
+              "    url: baseUrl + '/movies/favorites',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/json',",
+              "        'Authorization': 'Bearer ' + token",
+              "    },",
+              "    body: {",
+              "        mode: 'raw',",
+              "        raw: JSON.stringify({ movieId: 1 })",
+              "    }",
+              "}, function(err, res) {",
+              "    console.log('MovieId 1 agregado antes del test de duplicado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieId\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Profile - No Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token no proporcionado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/profile",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Profile - Invalid Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token inválido o expirado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "tokeninvalido123",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/profile",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Favorites - No Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token no proporcionado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Favorites - Invalid Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 401\", function() {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de error\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Token inválido o expirado');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "tokeninvalido123",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/favorites",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Favorite",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200\", function() {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"La respuesta tiene mensaje de éxito\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.message).to.equal('Eliminada de favoritos');",
+              "});",
+              "",
+              "pm.test(\"El array de favoritos tiene menos elementos\", function() {",
+              "    const response = pm.response.json();",
+              "    pm.expect(response.favorites).to.be.an('array');",
+              "    pm.expect(response.favorites.length).to.be.below(2);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movies/favorites/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movies",
+            "favorites",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "random_user",
+      "value": ""
+    }
+  ]
+}
