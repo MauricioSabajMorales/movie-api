@@ -23,14 +23,17 @@ jobs:
         run: npm install
 
       - name: Start API server
-        run: npm run dev &
+        run: npm start &
         env:
           PORT: 3001
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
 
       - name: Wait for server to be ready
-        run: npx wait-on http://localhost:3001 --timeout 30000
+        run: |
+          echo "Waiting for server..."
+          sleep 5
+          curl --retry 10 --retry-delay 2 --retry-connrefused http://localhost:3001/movies || true
 
       - name: Install Newman
         run: npm install -g newman newman-reporter-htmlextra
